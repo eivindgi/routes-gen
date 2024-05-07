@@ -5,13 +5,14 @@ export function route<T extends string>(
   if (params) {
     const segments = path.split(/\/+/).map((segment) => {
       if (segment.startsWith(":")) {
-        const key = segment.replace(":", "").replace("?", "");
+        const [segmentKey, extension] = segment.split(".");
+        const key = segmentKey.replace(":", "").replace("?", "");
 
         if (key in params) {
-          return params[key];
+          return extension ? `${params[key]}.${extension}` : params[key];
         }
 
-        // If the segment is optional and it doesn't exist in params, return null to omit it from the resulting path
+        // If the segment is optional, and it doesn't exist in params, return null to omit it from the resulting path
         if (segment.endsWith("?")) {
           return null;
         }
